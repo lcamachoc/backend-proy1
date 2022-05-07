@@ -1,4 +1,48 @@
-const express = require('express');
+import express from 'express';
+import cors from 'cors';
+import mongoose from 'mongoose';
+import users from './src/routes/users.routes.js';
+import posts from './src/routes/posts.routes.js';
+import carts from './src/routes/carts.routes.js';
+import histories from './src/routes/histories.routes.js';
+import reviews from './src/routes/reviews.routes.js';
+
 const app = express();
 
-app.listen(8080);
+app.use(cors());
+
+app.use('/carts', carts);
+app.use('/histories', histories);
+app.use('/posts', posts);
+app.use('/reviews', reviews);
+app.use('/users', users);
+
+const main = async () => {
+
+    try {
+        await mongoose.connect(CONN_STR, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+        });
+        console.log(' Status: Connected');
+    } catch (error) {
+        console.error(' Error: An error occurred connecting to MongoDB');
+        process.exit(1);
+    }
+
+    console.log('Status: Starting server...');
+
+    app.listen(3000, () => {
+        console.log(`Status: Server listening at port: ${3000}`);
+    });
+
+    process.on('SIGINT', async () => {
+        console.log('Status: Closing connection...');
+        await mongoose.disconnect();
+        console.log(
+            'Status: Connection is closed. State is: ${mongoose.connection.readyState}'
+        ); process.exit(0);
+    });
+};
+
+main();
