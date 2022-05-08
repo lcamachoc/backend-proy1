@@ -1,5 +1,5 @@
-import express from 'express';
 import cors from 'cors';
+import express from 'express';
 import mongoose from 'mongoose';
 import users from './src/routes/users.routes.js';
 import posts from './src/routes/posts.routes.js';
@@ -8,19 +8,22 @@ import histories from './src/routes/histories.routes.js';
 import reviews from './src/routes/reviews.routes.js';
 
 const app = express();
-
 app.use(cors());
-
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 app.use('/carts', carts);
 app.use('/histories', histories);
 app.use('/posts', posts);
 app.use('/reviews', reviews);
 app.use('/users', users);
-
+app.get('/', (req, res) => {
+    res.json({ message: 'API Mercadito' });
+  });
+  
 const main = async () => {
 
     try {
-        await mongoose.connect(CONN_STR, {
+        await mongoose.connect('mongodb+srv://lcamachoc:l1007171146@cluster0.0ofeh.mongodb.net/mercaditoDatabase?retryWrites=true&w=majority', {
             useNewUrlParser: true,
             useUnifiedTopology: true,
         });
@@ -32,8 +35,8 @@ const main = async () => {
 
     console.log('Status: Starting server...');
 
-    app.listen(3000, () => {
-        console.log(`Status: Server listening at port: ${3000}`);
+    app.listen(3001, () => {
+        console.log(`Status: Server listening at port: ${3001}`);
     });
 
     process.on('SIGINT', async () => {
