@@ -57,7 +57,7 @@ export const fetchUserPosts = async (req, res) => {
     try {
         const posts = await Post.find({ owner_id: user_id }).sort({ createdAt: -1 });
 
-        return message(res, "Successfull posts", 200, posts);
+        return res.status(200).json(posts);
       } catch (error) {
 
         console.log(error);

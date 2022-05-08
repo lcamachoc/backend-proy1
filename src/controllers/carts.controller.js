@@ -3,7 +3,7 @@ import Cart from '../models/cart.model.js';
 export const fetchCart = async (req, res) => {
     const { user_id } = req.query;
     try {
-        const cart = await Cart.find({ user_id, state: true, bought: false }) ?? await Cart.create({ user_id });
+        const cart = await Cart.find({ user_id, state: true, bought: false });
         return res.status(200).json(cart);
     } catch (error) {
         return res.status(500).json({ error });
@@ -38,18 +38,15 @@ export const removeFromCart = async (req, res) => {
 
 export const buyCart = async (req, res) => {
     const { user_id } = req.body;
-    try {
-      const user = await User.findById(user_id);
-      if (!user) return res.status(404).json({ message: 'User was not found.' });
-  
-      Cart.updateMany(
+    try {  
+      await Cart.updateMany(
           { user_id, state: true },
           { $set: { state: false, bought: true } }
         ).exec();
   
-      return message(res, "Cart purchased successfully.", 200, {});
+      return res.status(200).json({});
     } catch (error) {
       console.log(error);
-      return message(res, "Cart could not be purchased.", 500);
+      return res.status(500).json({ error });
     }
   };
